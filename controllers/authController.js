@@ -16,13 +16,27 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     console.log("Password hashed:", hashedPassword);
 
-    const user = await User.create({ firstName, lastName, password: hashedPassword, email });
+    const user = await User.create({
+      firstName,
+      lastName,
+      password: hashedPassword,
+      email
+    });
 
     console.log("User Created:", user);
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    res.status(201).json({ message: 'User registered successfully', token, userId: user._id });
+    res.status(201).json({
+      message: 'User registered successfully',
+      token,
+      user: {
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+        }
+      });
   } catch (error) {
     console.error("Error in registerUser:", error);
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -45,7 +59,16 @@ const loginUser = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    res.json({ message: 'Login successful', token, userId: user._id });
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName
+        }
+      });
   } catch (error) {
     console.log("Error in loginUser:", error);
     res.status(500).json({ message: 'Server error', error: error.message });
