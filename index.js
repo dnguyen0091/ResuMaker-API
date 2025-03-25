@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(cors({
   origin: [
   'http://localhost:5173',
-  'https://resumaker-web-personal.vercel.app'],
+  'https://resu-maker-web.vercel.app'],
   credentials: true
 }));
 app.use(cookieParser());
