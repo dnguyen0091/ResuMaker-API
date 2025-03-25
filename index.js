@@ -17,7 +17,12 @@ connectDB().then(() => {
 });
 
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({
+  origin: [
+  'http://localhost:5173',
+  'https://resumaker-web-personal.vercel.app'],
+  credentials: true
+}));
 app.use(cookieParser());
 
 app.use('/api/auth', require('./routes/authRoutes'));
