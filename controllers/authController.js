@@ -9,8 +9,18 @@ export const registerUser = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
 
     const userExists = await User.findOne({ email });
+    console.log(userExists.verified);
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      if (userExists.verified == true)
+      {
+        console.log("Register failed: User exists and is verified");
+        return res.status(400).json({ message: 'User already exists' });
+      }
+      else
+      {
+        await User.findOneAndDelete({ email });
+        console.log("Old document removed. Creating new user...")
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
