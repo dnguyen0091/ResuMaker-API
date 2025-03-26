@@ -1,8 +1,8 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   try {
     console.log("Registering User with:", req.body);
 
@@ -43,7 +43,9 @@ const registerUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
+  console.log("Registering User with:", req.body);
+
   try {
     const { email, password } = req.body;
 
@@ -56,6 +58,8 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+
+    console.log("User Logged In:", user);
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
@@ -74,5 +78,3 @@ const loginUser = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-
-module.exports = { registerUser, loginUser };
