@@ -73,20 +73,40 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    console.log("User Logged In:", user);
+    if (user.verified == true)
+    {
+      console.log("User Logged In:", user);
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    res.json({
-      message: 'Login successful',
-      token,
-      user: {
-        _id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName
+      res.status(200).json({
+        message: 'Login successful',
+        token,
+        user: {
+          _id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
         }
       });
+    } 
+    else
+    {
+      console.log("User Verification Incomplete:", user);
+
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+      res.status(202).json({
+        message: 'Login incomplete',
+        token,
+        user: {
+          _id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      });
+    }
   } catch (error) {
     console.log("Error in loginUser:", error);
     res.status(500).json({ message: 'Server error', error: error.message });
