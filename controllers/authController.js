@@ -9,7 +9,7 @@ export const registerUser = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
 
     const userExists = await User.findOne({ email });
-    console.log(userExists.verified);
+    // console.log(userExists.verified);
     if (userExists) {
       if (userExists.verified == true)
       {
