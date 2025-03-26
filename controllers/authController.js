@@ -43,6 +43,10 @@ export const registerUser = async (req, res) => {
   }
 };
 
+export const verifyEmail = async (req, res) => {
+
+}
+
 export const loginUser = async (req, res) => {
   console.log("Registering User with:", req.body);
 
@@ -97,3 +101,8 @@ export const checkExists = async (req, res) =>
     res.status(500).json({ message: "Server error", error});
   }
 };
+
+
+export const forgotPassword = async (req, res) => {
+  
+}
