@@ -75,7 +75,7 @@ export const verifyEmail = async (req, res) => {
 
   try
   {
-    const { email, verificationCode} = req.body;
+    const { email, verificationCode } = req.body;
 
     const vcode = await VCode.findOne({ email });
     if (vcode.used == true)
@@ -169,7 +169,7 @@ export const loginUser = async (req, res) => {
         verificationCode: newCode,
         email,
         used: false
-      })
+      });
 
       res.status(202).json({
         message: 'Login incomplete',
@@ -209,5 +209,49 @@ export const checkExists = async (req, res) =>
 
 
 export const forgotPassword = async (req, res) => {
-  
-}
+  console.log("Forgot password request for:", req.body);
+  const { email } = req.body;
+
+  try
+  {
+    const user = await User.findOne({ email });
+    if (!user)
+    {
+      return res.status(404).json({ message: "Email not in use" });
+    }
+    if (user.verified == false)
+    {
+      return res.status(400).json({ message: "Email not verified. Please re-register" });
+    }
+
+    const vExists = await VCode.findOne({ email });
+    if (vExists)
+    {
+      await VCode.findOneAndDelete({ email });
+      console.log("Old verification code removed. Creating new code...")
+    }
+
+    var newCode = 0;
+    while (newCode == 0 || (await VCode.findOne({ newCode })))
+      newCode = Math.floor(Math.random() * 899999 + 100000);
+    const vcode = VCode.create({
+      verificationCode: newCode,
+      email,
+      used: false
+    });
+
+    res.status(201).json({ message: "Verification code created"});
+  }
+  catch (error)
+  {
+    res.status(500).json({ message: "Server error", error});
+  }
+};
+
+export const verifyForgot = async (req, res) => {
+
+};
+
+export const updatePassword = async (req, res) => {
+
+};
