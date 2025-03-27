@@ -24,6 +24,6 @@ router.post('/generate-experience-bullets', generateExperienceBullets);
 router.post('/generate-custom-bullets', generateCustomBullets);
 
 // POST route for resume analysis
-//router.post('/analyze', upload.single('file'), analyzeResume);  // Handle single file upload
-router.post('/analyze',analyzeResume);
+router.post('/analyze', upload.single('file'), analyzeResume);  // Handle single file upload
+// router.post('/analyze',analyzeResume);
 export default router;
