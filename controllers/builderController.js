@@ -89,7 +89,7 @@ export const generateCustomBullets = async (req, res) => {
     
     try {
         const prompt = `
-            As an expert resume writer, generate 2 compelling bullet points for the following custom section entry:
+            As an expert resume writer, generate 3 compelling bullet points for the following custom section entry:
             Title: ${customData.title}
             Subtitle: ${customData.subtitle}
             Location: ${customData.location}
@@ -97,8 +97,8 @@ export const generateCustomBullets = async (req, res) => {
             End Date: ${customData.endDate}
 
             Focus on relevant achievements and details that enhance the resume.
-            Format the response as a JSON array of exactly 2 strings.
-            Example format: ["First bullet point", "Second bullet point"]
+            Format the response as a JSON array of exactly 3 strings.
+            Example format: ["First bullet point", "Second bullet point", "Third bullet point"]
         `;
 
         const response = await openai.chat.completions.create({
