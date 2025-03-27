@@ -4,7 +4,7 @@ import { analyzeResume } from '../controllers/analyzeController.js';
 import { generateEducationBullets, generateExperienceBullets, generateCustomBullets } from '../controllers/builderController.js';
 import path from 'path';
 
-Multer storage setup
+// Multer storage setup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads');  // Store files in 'uploads' directory
@@ -25,5 +25,5 @@ router.post('/generate-custom-bullets', generateCustomBullets);
 
 // POST route for resume analysis
 router.post('/analyze', upload.single('file'), analyzeResume);  // Handle single file upload
-//router.post('/analyze',analyzeResume);
+
 export default router;
