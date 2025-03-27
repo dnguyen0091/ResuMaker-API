@@ -21,7 +21,7 @@ const VCodeSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true,
-  collection: 'availablecodes'
+  collection: 'VCodes'
 });
 
 const VCode = mongoose.model('Vcode', VCodeSchema);

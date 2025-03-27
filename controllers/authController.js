@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
+import VCode from '../models/VCode.js';
 
 export const registerUser = async (req, res) => {
   try {
@@ -9,7 +11,6 @@ export const registerUser = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
 
     const userExists = await User.findOne({ email });
-    // console.log(userExists.verified);
     if (userExists) {
       if (userExists.verified == true)
       {
@@ -37,6 +38,22 @@ export const registerUser = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
+    const vExists = await VCode.findOne({ email });
+      if (vExists)
+      {
+        await VCode.findOneAndDelete({ email });
+        console.log("Old verification code removed. Creating new code...")
+      }
+      
+      var newCode = 0;
+      while (newCode == 0 || (await VCode.findOne({ newCode })))
+        newCode = Math.floor(Math.random() * 899999 + 100000);
+      const vcode = VCode.create({
+        verificationCode: newCode,
+        email,
+        used: false
+      })
+
     res.status(201).json({
       message: 'User registered successfully',
       token,
@@ -54,7 +71,48 @@ export const registerUser = async (req, res) => {
 };
 
 export const verifyEmail = async (req, res) => {
+  console.log("Verifying User with:", req.body);
 
+  try
+  {
+    const { email, verificationCode} = req.body;
+
+    const vcode = await VCode.findOne({ email });
+    if (vcode.used == true)
+    {
+      console.log("Code already processed");
+      return res.status(400).json({ message: 'Code already processed' });
+    }
+
+    if (vcode.verificationCode == verificationCode)
+    {
+      await User.updateOne({ email }, { verified: true});
+      await VCode.updateOne({ email }, { used: true});
+      const user = await User.findOne({ email });
+      console.log("User Successfully Verified:", user);
+
+      res.status(200).json({
+        message: 'User Successfully Verified',
+        user: {
+          _id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          verified: user.verified
+        }
+      });
+    }
+    else
+    {
+      console.log("Invalid credentials");
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+  }
+  catch (error)
+  {
+    console.log("Error in verifyEmail:", error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
 }
 
 export const loginUser = async (req, res) => {
@@ -86,7 +144,8 @@ export const loginUser = async (req, res) => {
           _id: user._id,
           email: user.email,
           firstName: user.firstName,
-          lastName: user.lastName
+          lastName: user.lastName,
+          verified: user.verified
         }
       });
     } 
@@ -95,6 +154,22 @@ export const loginUser = async (req, res) => {
       console.log("User Verification Incomplete:", user);
 
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+      const vExists = await VCode.findOne({ email });
+      if (vExists)
+      {
+        await VCode.findOneAndDelete({ email });
+        console.log("Old verification code removed. Creating new code...")
+      }
+      
+      var newCode = 0;
+      while (newCode == 0 || (await VCode.findOne({ newCode })))
+        newCode = Math.floor(Math.random() * 899999 + 100000);
+      const vcode = VCode.create({
+        verificationCode: newCode,
+        email,
+        used: false
+      })
 
       res.status(202).json({
         message: 'Login incomplete',
