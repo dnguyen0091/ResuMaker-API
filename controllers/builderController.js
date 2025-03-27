@@ -54,7 +54,7 @@ export const generateExperienceBullets = async (req, res) => {
     
     try {
         const prompt = `
-            As an expert resume writer, generate 2 compelling bullet points for the following work experience:
+            As an expert resume writer, generate 3 compelling bullet points for the following work experience:
             Title: ${experienceData.title}
             Company: ${experienceData.company}
             Location: ${experienceData.location}
@@ -63,8 +63,8 @@ export const generateExperienceBullets = async (req, res) => {
             Current Position: ${experienceData.isCurrentPosition}
 
             Focus on quantifiable achievements, responsibilities, and impact.
-            Format the response as a JSON array of exactly 2 strings.
-            Example format: ["First bullet point", "Second bullet point"]
+            Format the response as a JSON array of exactly 3 strings.
+            Example format: ["First bullet point", "Second bullet point", "Third bullet point"]
         `;
 
         const response = await openai.chat.completions.create({
