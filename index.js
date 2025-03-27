@@ -26,6 +26,7 @@ const startServer = async () => {
 
     app.use('/api/auth', authRoutes);
 
+    app.use('/api/ai', aiRoutes);
 
     app.get('/', (req, res) => {
       res.send('Testing API is running...');
