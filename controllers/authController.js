@@ -69,8 +69,8 @@ export const registerUser = async (req, res) => {
   
       transporter.verify(function (error, success) {
         if (error) {
-          console.log("SMTP authentification failed", error);
-          res.status(401).json({ message: "SMTP authentification failed", error })
+          console.log("SMTP authentication failed", error);
+          res.status(401).json({ message: "SMTP authentication failed", error })
         }
         else {
           console.log("SMTP authenticated");
@@ -213,8 +213,8 @@ export const loginUser = async (req, res) => {
   
       transporter.verify(function (error, success) {
         if (error) {
-          console.log("SMTP authentification failed", error);
-          res.status(401).json({ message: "SMTP authentification failed", error })
+          console.log("SMTP authentication failed", error);
+          res.status(401).json({ message: "SMTP authentication failed", error })
         }
         else {
           console.log("SMTP authenticated");
@@ -311,8 +311,8 @@ export const forgotPassword = async (req, res) => {
 
     transporter.verify(function (error, success) {
       if (error) {
-        console.log("SMTP authentification failed", error);
-        res.status(401).json({ message: "SMTP authentification failed", error })
+        console.log("SMTP authentication failed", error);
+        res.status(401).json({ message: "SMTP authentication failed", error })
       }
       else {
         console.log("SMTP authenticated");
