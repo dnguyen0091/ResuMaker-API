@@ -21,7 +21,7 @@ const startServer = async () => {
       origin: [
         'http://localhost:5173',
         'https://resu-maker-web.vercel.app',
-        'https://www.resumaker.org/'
+        'https://www.resumaker.org'
       ],
       credentials: true
     }));
