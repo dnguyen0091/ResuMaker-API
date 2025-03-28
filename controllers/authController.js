@@ -275,10 +275,12 @@ export const forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user)
     {
+      console.log("Email not in use");
       return res.status(404).json({ message: "Email not in use" });
     }
     if (user.verified == false)
     {
+      console.log("Email not verified");
       return res.status(400).json({ message: "Email not verified. Please re-register" });
     }
 
@@ -377,5 +379,19 @@ export const verifyForgot = async (req, res) => {
 };
 
 export const updatePassword = async (req, res) => {
+  const { email, password } = req.body;
+  try{
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("Password hashed:", hashedPassword);
 
+    await User.updateOne({ email }, { password: hashedPassword });
+    console.log("Password has been updated");
+    const user = await User.findOne({});
+    res.status(200).json({ message: 'Password successfully updated'});
+  }
+  catch (error)
+  {
+    console.log("Error with updatePassword:", error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
 };
