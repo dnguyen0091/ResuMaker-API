@@ -27,10 +27,11 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  resumes: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'Resume',
-    default: [] },
+  resumes: [{
+    fileName: String,
+    filePath: String,
+    uploadedAt: Date
+}],
   chatHistory: {
     type: [String],
     default: []
