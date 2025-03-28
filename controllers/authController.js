@@ -109,10 +109,10 @@ export const verifyEmail = async (req, res) => {
     const { email, verificationCode } = req.body;
 
     const vcode = await VCode.findOne({ email });
-    if (vcode.used == true)
+    if (vcode.used == true || ((new Date() - new Date(vcode.createdAt).valueOf()) > 3600000))
     {
-      console.log("Code already processed");
-      return res.status(400).json({ message: 'Code already processed' });
+      console.log("Code already processed or expired");
+      return res.status(400).json({ message: 'Code already processed or expired' });
     }
 
     if (vcode.verificationCode == verificationCode)
@@ -343,10 +343,10 @@ export const verifyForgot = async (req, res) => {
     const { email, verificationCode } = req.body;
 
     const vcode = await VCode.findOne({ email });
-    if (vcode.used == true)
+    if (vcode.used == true || ((new Date() - new Date(vcode.createdAt).valueOf()) > 3600000))
     {
-      console.log("Code already processed");
-      return res.status(400).json({ message: 'Code already processed' });
+      console.log("Code already processed or expired");
+      return res.status(400).json({ message: 'Code already processed or expired' });
     }
 
     if (vcode.verificationCode == verificationCode)
