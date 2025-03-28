@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import resumeRoutes from './routes/resumeRoutes.js';
 
 dotenv.config();
 
@@ -28,6 +29,8 @@ const startServer = async () => {
     app.use('/api/auth', authRoutes);
 
     app.use('/api/ai', aiRoutes);
+
+    app.use('/api/resume', resumeRoutes);
 
     app.get('/', (req, res) => {
       res.send('Testing API is running...');
