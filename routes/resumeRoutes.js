@@ -1,7 +1,8 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import { uploadResume, getUserResumes } from '../controllers/resumeController.js';
+import { uploadResume, getUserResumes, getResumeById } from '../controllers/resumeController.js';
+import { generateKeySync } from 'crypto';
 
 const router = express.Router();
 
@@ -18,10 +19,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Resume Upload Route
+// Resume upload route
 router.post('/upload-resume', upload.single('resume'), uploadResume);
 
-// Get resumes
+// Get all resumes
 router.get('/:email/resumes', getUserResumes);
+
+// Get resume by ID
+router.get('/view/:resumeId', getResumeById);
 
 export default router;

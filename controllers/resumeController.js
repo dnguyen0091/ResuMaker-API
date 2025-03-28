@@ -51,3 +51,29 @@ export const getUserResumes = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
+// Endpoint to get a specific resume by ID
+export const getResumeById = async (req, res) => {
+    const { resumeId } = req.params;
+
+    try {
+        // Find the user who has this resume in their resumes array
+        const user = await User.findOne({ "resumes._id": resumeId });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Resume not found' });
+        }
+
+        // Find the specific resume in the user's resumes array
+        const resume = user.resumes.find(r => r._id.toString() === resumeId);
+
+        if (!resume) {
+            return res.status(404).json({ message: 'Resume not found' });
+        }
+
+        res.status(200).json(resume);
+    } catch (error) {
+        console.error('Error fetching resume:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
