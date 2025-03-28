@@ -19,7 +19,8 @@ const startServer = async () => {
     app.use(cors({
       origin: [
         'http://localhost:5173',
-        'https://resu-maker-web.vercel.app'
+        'https://resu-maker-web.vercel.app',
+        'https://www.resumaker.org/'
       ],
       credentials: true
     }));
