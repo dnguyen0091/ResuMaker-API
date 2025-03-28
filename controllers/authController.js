@@ -3,6 +3,10 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import VCode from '../models/VCode.js';
+import dotenv from 'dotenv';
+import { mailOptions } from '../models/Mailing.js'
+
+dotenv.config();
 
 export const registerUser = async (req, res) => {
   try {
@@ -52,7 +56,34 @@ export const registerUser = async (req, res) => {
         verificationCode: newCode,
         email,
         used: false
-      })
+      });
+
+      const transporter = nodemailer.createTransport({
+        host: "mail.smtp2go.com",
+        port: 2525,
+        auth: {
+          user: process.env.SMTP_USERNAME,
+          pass: process.env.SMTP_PASSWORD
+        },
+      });
+  
+      transporter.verify(function (error, success) {
+        if (error) {
+          console.log("SMTP authentification failed", error);
+          res.status(401).json({ message: "SMTP authentification failed", error })
+        }
+        else {
+          console.log("SMTP authenticated");
+        }
+      });
+  
+      transporter.sendMail(mailOptions(newCode, email), function(error, res) {
+        if(error){
+          console.log(error);
+        } else {
+          console.log("Message sent!");
+        }
+      });
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -171,6 +202,33 @@ export const loginUser = async (req, res) => {
         used: false
       });
 
+      const transporter = nodemailer.createTransport({
+        host: "mail.smtp2go.com",
+        port: 2525,
+        auth: {
+          user: process.env.SMTP_USERNAME,
+          pass: process.env.SMTP_PASSWORD
+        },
+      });
+  
+      transporter.verify(function (error, success) {
+        if (error) {
+          console.log("SMTP authentification failed", error);
+          res.status(401).json({ message: "SMTP authentification failed", error })
+        }
+        else {
+          console.log("SMTP authenticated");
+        }
+      });
+  
+      transporter.sendMail(mailOptions(newCode, email), function(error, res) {
+        if(error){
+          console.log(error);
+        } else {
+          console.log("Message sent!");
+        }
+      });
+
       res.status(202).json({
         message: 'Login incomplete',
         token,
@@ -240,6 +298,33 @@ export const forgotPassword = async (req, res) => {
       used: false
     });
 
+    const transporter = nodemailer.createTransport({
+      host: "mail.smtp2go.com",
+      port: 2525,
+      auth: {
+        user: process.env.SMTP_USERNAME,
+        pass: process.env.SMTP_PASSWORD
+      },
+    });
+
+    transporter.verify(function (error, success) {
+      if (error) {
+        console.log("SMTP authentification failed", error);
+        res.status(401).json({ message: "SMTP authentification failed", error })
+      }
+      else {
+        console.log("SMTP authenticated");
+      }
+    });
+
+    transporter.sendMail(mailOptions(newCode, email), function(error, res) {
+      if(error){
+        console.log(error);
+      } else {
+        console.log("Message sent!");
+      }
+    });
+
     res.status(201).json({ message: "Verification code created"});
   }
   catch (error)
@@ -249,7 +334,46 @@ export const forgotPassword = async (req, res) => {
 };
 
 export const verifyForgot = async (req, res) => {
+  console.log("Verifying User with:", req.body);
 
+  try
+  {
+    const { email, verificationCode } = req.body;
+
+    const vcode = await VCode.findOne({ email });
+    if (vcode.used == true)
+    {
+      console.log("Code already processed");
+      return res.status(400).json({ message: 'Code already processed' });
+    }
+
+    if (vcode.verificationCode == verificationCode)
+    {
+      await VCode.updateOne({ email }, { used: true});
+      const user = await User.findOne({ email });
+      console.log("User Successfully Verified:", user);
+
+      res.status(200).json({
+        message: 'User Successfully Verified',
+        user: {
+          _id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      });
+    }
+    else
+    {
+      console.log("Invalid credentials");
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+  }
+  catch (error)
+  {
+    console.log("Error in verifyEmail:", error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
 };
 
 export const updatePassword = async (req, res) => {
