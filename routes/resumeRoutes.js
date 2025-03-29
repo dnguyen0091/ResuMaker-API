@@ -1,8 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import path from 'path';
-import { uploadResume, getUserResumes, getResumeById } from '../controllers/resumeController.js';
-import { generateKeySync } from 'crypto';
+import { uploadResume, getUserResumes, viewResume } from '../controllers/resumeController.js';
 
 const router = express.Router();
 
@@ -26,6 +24,6 @@ router.post('/upload-resume', upload.single('resume'), uploadResume);
 router.get('/:email/resumes', getUserResumes);
 
 // Get resume by ID
-router.get('/view/:resumeId', getResumeById);
+router.get('/view/:userId/:resumeId', viewResume);
 
 export default router;
